@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager.API/TaskManager.API.csproj" />
+  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager.Application/TaskManager.Application.csproj" />
+  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager.Infrastructure/TaskManager.Infrastructure.csproj" />
+  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager/TaskManager.Domain.csproj" />
+</Solution>
