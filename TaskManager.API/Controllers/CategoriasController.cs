@@ -45,15 +45,15 @@ public class CategoriasController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] Categoria categoria)
     {
-        var categoriaExiste = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == id);
-        if (categoriaExiste == null)
+        var categoriaAtualizada = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == id);
+        if (categoriaAtualizada == null)
             return NotFound();
 
         
-        categoriaExiste.Nome = categoria.Nome;
+        categoriaAtualizada.Nome = categoria.Nome;
 
         await _context.SaveChangesAsync();
-        return Ok(categoriaExiste);
+        return Ok(categoriaAtualizada);
     }
 
     [HttpDelete("{id}")]
