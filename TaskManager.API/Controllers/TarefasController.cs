@@ -1,69 +1,67 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using TaskManager.Application.Interfaces;
 using TaskManager.Domain;
-using TaskManager.Infrastructure.Data;
 
 namespace TaskManager.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class TarefasController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    public TarefasController(AppDbContext context)
+    private readonly ITarefaService _service;
+
+    public TarefasController(ITarefaService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> Listar()
     {
-        var tarefaLista = await _context.Tarefas.Include(t => t.Categoria).ToListAsync();
+        var tarefaLista = await _service.Listar();
         return Ok(tarefaLista);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Tarefa>> Buscar(int id)
     {
-        var buscaLista = await _context.Tarefas.FirstOrDefaultAsync(b => b.Id == id);
-        if (buscaLista == null)
+        var tarefa = await _service.Buscar(id);
+        if (tarefa == null)
             return NotFound();
-        return Ok(buscaLista);
+        return Ok(tarefa);
     }
 
     [HttpPost]
     public async Task<ActionResult<Tarefa>> Criar([FromBody] Tarefa tarefa)
     {
-        _context.Tarefas.Add(tarefa);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(Listar), new {id = tarefa.Id}, tarefa);
+        var tarefaCriada = await _service.Criar(tarefa);
+        return CreatedAtAction(nameof(Listar), new { id = tarefaCriada.Id }, tarefaCriada);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] Tarefa tarefa)
     {
-        var tarefaAtualizada = await _context.Tarefas.FirstOrDefaultAsync(t => t.Id == id);
-        if (tarefaAtualizada == null)
+        var tarefaExiste = await _service.Buscar(id);
+        if (tarefaExiste == null)
             return NotFound();
 
-        tarefaAtualizada.Titulo = tarefa.Titulo;
-        tarefaAtualizada.CategoriaId = tarefa.CategoriaId;
-        tarefaAtualizada.Concluida = tarefa.Concluida;
-        tarefaAtualizada.Descricao = tarefa.Descricao;
+        tarefaExiste.Titulo = tarefa.Titulo;
+        tarefaExiste.Descricao = tarefa.Descricao;
+        tarefaExiste.Concluida = tarefa.Concluida;
+        tarefaExiste.CategoriaId = tarefa.CategoriaId;
 
-        await _context.SaveChangesAsync();
-        return Ok(tarefaAtualizada);
+        await _service.Atualizar(tarefaExiste);
+        return Ok(tarefaExiste);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Deletar (int id)
+    public async Task<IActionResult> Deletar(int id)
     {
-        var tarefaDeletada = await _context.Tarefas.FirstOrDefaultAsync(d => d.Id == id);
-        if (tarefaDeletada == null)
+        var tarefaExiste = await _service.Buscar(id);
+        if (tarefaExiste == null)
             return NotFound();
-        _context.Tarefas.Remove(tarefaDeletada);
-        await _context.SaveChangesAsync();
+
+        await _service.Deletar(id);
         return NoContent();
     }
 }
