@@ -1,45 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TaskManager.Application.Interfaces;
 using TaskManager.Domain;
 
-
 namespace TaskManager.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-
 public class CategoriasController : ControllerBase
 {
     private readonly ICategoriaService _service;
-    public CategoriasController(ICategoriaService service)
-    {
-        _service = service;
-    }
 
-    [HttpGet]
-    public async Task<IActionResult> Listar()
-    {
-        var categorias = await _service.Listar();
-        return Ok(categorias);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Categoria>> Buscar (int id)
-    {
-        using Microsoft.AspNetCore.Mvc;
-        using TaskManager.Application.Interfaces;
-        using TaskManager.Domain;
-
-
-namespace TaskManager.API.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-
-public class CategoriasController : ControllerBase
-{
-    private readonly ICategoriaService _service;
     public CategoriasController(ICategoriaService service)
     {
         _service = service;
@@ -55,18 +25,18 @@ public class CategoriasController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Categoria>> Buscar(int id)
     {
-        var catergoriaBuscar = await _service.Buscar( id);
-        if (catergoriaBuscar == null)
+        var categoriaBuscar = await _service.Buscar(id);
+        if (categoriaBuscar == null)
             return NotFound();
 
-        return Ok(catergoriaBuscar);
+        return Ok(categoriaBuscar);
     }
 
     [HttpPost]
     public async Task<ActionResult<Categoria>> Criar([FromBody] Categoria categoria)
     {
         var categoriaCriada = await _service.Criar(categoria);
-        return CreatedAtAction(nameof(Listar), new { id = categoria.Id }, categoria);
+        return CreatedAtAction(nameof(Listar), new { id = categoriaCriada.Id }, categoriaCriada);
     }
 
     [HttpPut("{id}")]
@@ -93,4 +63,3 @@ public class CategoriasController : ControllerBase
         return NoContent();
     }
 }
-   
