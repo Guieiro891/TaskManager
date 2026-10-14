@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using TaskManager.Application.Interfaces;
 using TaskManager.Domain;
-using TaskManager.Infrastructure.Data;
+
 
 namespace TaskManager.API.Controllers;
 
@@ -10,61 +11,86 @@ namespace TaskManager.API.Controllers;
 
 public class CategoriasController : ControllerBase
 {
-    private readonly AppDbContext _context;
-    public CategoriasController(AppDbContext context)
+    private readonly ICategoriaService _service;
+    public CategoriasController(ICategoriaService service)
     {
-        _context = context;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> Listar()
     {
-        var catergorias = await _context.Categorias.ToListAsync();
-        return Ok(catergorias);
+        var categorias = await _service.Listar();
+        return Ok(categorias);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Categoria>> Buscar (int id)
     {
-        var catergoriaBuscar = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == id);
+        using Microsoft.AspNetCore.Mvc;
+        using TaskManager.Application.Interfaces;
+        using TaskManager.Domain;
+
+
+namespace TaskManager.API.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+
+public class CategoriasController : ControllerBase
+{
+    private readonly ICategoriaService _service;
+    public CategoriasController(ICategoriaService service)
+    {
+        _service = service;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Listar()
+    {
+        var categorias = await _service.Listar();
+        return Ok(categorias);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<Categoria>> Buscar(int id)
+    {
+        var catergoriaBuscar = await _service.Buscar( id);
         if (catergoriaBuscar == null)
             return NotFound();
-       
+
         return Ok(catergoriaBuscar);
     }
 
     [HttpPost]
     public async Task<ActionResult<Categoria>> Criar([FromBody] Categoria categoria)
     {
-        
-        _context.Categorias.Add(categoria);
-        await _context.SaveChangesAsync();
+        var categoriaCriada = await _service.Criar(categoria);
         return CreatedAtAction(nameof(Listar), new { id = categoria.Id }, categoria);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Atualizar(int id, [FromBody] Categoria categoria)
     {
-        var categoriaAtualizada = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == id);
-        if (categoriaAtualizada == null)
+        var categoriaExiste = await _service.Buscar(id);
+        if (categoriaExiste == null)
             return NotFound();
 
-        
-        categoriaAtualizada.Nome = categoria.Nome;
+        categoriaExiste.Nome = categoria.Nome;
 
-        await _context.SaveChangesAsync();
-        return Ok(categoriaAtualizada);
+        await _service.Atualizar(categoriaExiste);
+        return Ok(categoriaExiste);
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Deletar (int id)
+    public async Task<IActionResult> Deletar(int id)
     {
-        var categoriaDeletar = await _context.Categorias.FirstOrDefaultAsync(c => c.Id == id);
-        if (categoriaDeletar == null)
+        var categoriaExiste = await _service.Buscar(id);
+        if (categoriaExiste == null)
             return NotFound();
 
-        _context.Categorias.Remove(categoriaDeletar);
-        await _context.SaveChangesAsync();
+        await _service.Deletar(id);
         return NoContent();
     }
 }
+   
