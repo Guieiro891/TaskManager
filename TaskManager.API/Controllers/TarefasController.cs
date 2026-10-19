@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManager.Application.Interfaces;
-using TaskManager.Domain;
+using TaskManager.Application.DTOs.Tarefas;
 
 namespace TaskManager.API.Controllers;
 
@@ -23,7 +23,7 @@ public class TarefasController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Tarefa>> Buscar(int id)
+    public async Task<ActionResult<TarefaDto>> Buscar(int id)
     {
         var tarefa = await _service.Buscar(id);
         if (tarefa == null)
@@ -32,26 +32,21 @@ public class TarefasController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Tarefa>> Criar([FromBody] Tarefa tarefa)
+    public async Task<ActionResult<TarefaDto>> Criar([FromBody] CriarTarefaDto dto)
     {
-        var tarefaCriada = await _service.Criar(tarefa);
+        var tarefaCriada = await _service.Criar(dto);
         return CreatedAtAction(nameof(Listar), new { id = tarefaCriada.Id }, tarefaCriada);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Atualizar(int id, [FromBody] Tarefa tarefa)
+    public async Task<IActionResult> Atualizar(int id, [FromBody] AtualizarTarefaDto dto)
     {
         var tarefaExiste = await _service.Buscar(id);
         if (tarefaExiste == null)
             return NotFound();
 
-        tarefaExiste.Titulo = tarefa.Titulo;
-        tarefaExiste.Descricao = tarefa.Descricao;
-        tarefaExiste.Concluida = tarefa.Concluida;
-        tarefaExiste.CategoriaId = tarefa.CategoriaId;
-
-        await _service.Atualizar(tarefaExiste);
-        return Ok(tarefaExiste);
+        await _service.Atualizar(id, dto);
+        return NoContent();
     }
 
     [HttpDelete("{id}")]

@@ -1,4 +1,5 @@
-﻿
+﻿using TaskManager.Application.DTOs.Tarefas;
+using TaskManager.Application.DTOs.Mappers;
 using TaskManager.Application.Interfaces;
 using TaskManager.Domain;
 
@@ -13,23 +14,35 @@ public class TarefaService : ITarefaService
         _repository = repository;
     }
 
-    public async Task<List<Tarefa>> Listar()
+    public async Task<List<TarefaDto>> Listar()
     {
-        return await _repository.Listar();
+        var tarefas = await _repository.Listar();
+        return tarefas.Select(t => TarefaMapper.ToDto(t)).ToList();
     }
 
-    public async Task<Tarefa?> Buscar(int id)
+    public async Task<TarefaDto?> Buscar(int id)
     {
-        return await _repository.Buscar(id);
+        var tarefa = await _repository.Buscar(id);
+        return tarefa == null ? null : TarefaMapper.ToDto(tarefa);
     } 
 
-    public async Task<Tarefa> Criar(Tarefa tarefa)
+    public async Task<TarefaDto> Criar(CriarTarefaDto dto)
     {
-        return await _repository.Criar(tarefa);
+        var tarefa = TarefaMapper.ToEntity(dto);  // entidade nova pronta
+        var tarefaCriada = await _repository.Criar(tarefa); //entidade enviada ao repository para ele salvar 
+        return TarefaMapper.ToDto(tarefaCriada); 
     }
 
-    public async Task Atualizar(Tarefa tarefa)
+    public async Task Atualizar(int id, AtualizarTarefaDto dto)
     {
+        var tarefa = await _repository.Buscar(id);
+        if (tarefa == null) return;
+
+        tarefa.Titulo = dto.Titulo;
+        tarefa.Descricao = dto.Descricao;
+        tarefa.CategoriaId = dto.CategoriaId;
+        tarefa.Concluida = dto.Concluida;
+
         await _repository.Atualizar(tarefa);
     }
 

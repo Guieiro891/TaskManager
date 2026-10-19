@@ -1,4 +1,5 @@
 ﻿namespace TaskManager.Domain;
+
 using System;
 
 public class Categoria

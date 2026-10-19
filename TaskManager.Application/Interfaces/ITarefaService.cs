@@ -1,12 +1,13 @@
-﻿using TaskManager.Domain;
+﻿using TaskManager.Application.DTOs.Tarefas;
+using TaskManager.Domain;
 
 namespace TaskManager.Application.Interfaces;
 
 public interface ITarefaService
 {
-    Task<List<Tarefa>> Listar();
-    Task<Tarefa?> Buscar(int id);
-    Task<Tarefa> Criar(Tarefa tarefa);
-    Task Atualizar(Tarefa tarefa);
+    Task<List<TarefaDto>> Listar();
+    Task<TarefaDto?> Buscar(int id);
+    Task<TarefaDto> Criar(CriarTarefaDto dto);
+    Task Atualizar(int id, AtualizarTarefaDto dto);
     Task Deletar(int id);
 }
