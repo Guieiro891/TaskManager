@@ -1,12 +1,12 @@
-﻿using TaskManager.Domain;
+﻿using TaskManager.Application.DTOs.Categorias;
 
 namespace TaskManager.Application.Interfaces;
 
 public interface ICategoriaService
 {
-     Task<List<Categoria>> Listar();
-    Task<Categoria?> Buscar(int id);
-    Task<Categoria> Criar(Categoria categoria);
-    Task Atualizar(Categoria categoria);
+    Task<List<CategoriaDto>> Listar();
+    Task<CategoriaDto?> Buscar(int id);
+    Task<CategoriaDto> Criar(CriarCategoriaDto dto);
+    Task Atualizar(int id, AtualizarCategoriaDto dto);
     Task Deletar(int id);
 }
