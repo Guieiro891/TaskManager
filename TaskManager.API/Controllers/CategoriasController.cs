@@ -25,6 +25,7 @@ public class CategoriasController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<CategoriaDto>> Buscar(int id)
     {
+        
         var categoriaBuscar = await _service.Buscar(id);
         if (categoriaBuscar == null)
             return NotFound();
