@@ -14,6 +14,6 @@ public class UsuarioRepository : IUsuarioRepository
     }
     public async Task<Usuario?> BuscarPorEmail(string email)
     {
-        return await _context.Usuarios.FirtOrDefaultAsync(u => u.Email == email);
+        return await _context.Usuarios.FirstOrDefaultAsync(u => u.Email == email);
     }
 }
