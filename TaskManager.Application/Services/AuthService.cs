@@ -1,8 +1,10 @@
 ﻿using TaskManager.Application.DTOs.Usuarios;
 using TaskManager.Application.Interfaces;
 using Microsoft.Extensions.Configuration;
+using TaskManager.Domain;
 
 namespace TaskManager.Application.Services;
+
 public class AuthService : IAuthService
 {
     private readonly IUsuarioRepository _repository;
@@ -33,11 +35,30 @@ public class AuthService : IAuthService
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             SigningCredentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(
-                 new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key),
-            Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature)
+                new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(key),
+                Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature)
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
+    }
+
+    public async Task<bool> Registrar(RegisterDto dto)
+    {
+        var usuarioExistente = await _repository.BuscarPorEmail(dto.Email);
+        if (usuarioExistente != null)
+            return false;
+
+        var senhaHash = BCrypt.Net.BCrypt.HashPassword(dto.Senha);
+
+        var usuario = new Usuario
+        {
+            Nome = dto.Nome,
+            Email = dto.Email,
+            SenhaHash = senhaHash
+        };
+
+        await _repository.Criar(usuario);
+        return true;
     }
 }
