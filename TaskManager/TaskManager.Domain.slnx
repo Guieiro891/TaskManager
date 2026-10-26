@@ -1,6 +1,7 @@
 <Solution>
-  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager.API/TaskManager.API.csproj" />
-  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager.Application/TaskManager.Application.csproj" />
-  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager.Infrastructure/TaskManager.Infrastructure.csproj" />
-  <Project Path="../../../../../../../../Estudos/CSharp/TaskManager/TaskManager/TaskManager.Domain.csproj" />
+  <Project Path="../TaskManager.API/TaskManager.API.csproj" />
+  <Project Path="../TaskManager.Application/TaskManager.Application.csproj" />
+  <Project Path="../TaskManager.Infrastructure/TaskManager.Infrastructure.csproj" />
+  <Project Path="../TaskManager.Tests/TaskManager.Tests.csproj" Id="37442d6c-918b-456e-bd22-13d01babc9ef" />
+  <Project Path="TaskManager.Domain.csproj" />
 </Solution>
