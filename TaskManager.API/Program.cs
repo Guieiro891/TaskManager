@@ -64,4 +64,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+// Aplica as migrations automaticamente ao iniciar em ambiente de desenvolvimento
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
+}
 app.Run();
